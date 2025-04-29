@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Παραγγελίες</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h1 class="mb-4">Λίστα Παραγγελιών</h1>
+    <ul class="list-group mb-5">
+        {% for order in orders %}
+            <li class="list-group-item">
+                {{ order.customer.name }} → {{ order.product.name }} ({{ order.quantity }} τεμάχια)
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="mb-3">Καταχώρηση Νέας Παραγγελίας</h2>
+    <form action="/add_order_form" method="POST" class="mb-5">
+        <div class="mb-3">
+            <label class="form-label">Πελάτης</label>
+            <select name="customer_id" class="form-select" required>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Προϊόν</label>
+            <select name="product_id" class="form-select" required>
+                {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }} ({{ product.quantity }} διαθέσιμα)</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ποσότητα</label>
+            <input type="number" name="quantity" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Καταχώρηση</button>
+    </form>
+</body>
+</html>

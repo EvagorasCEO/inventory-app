@@ -1,0 +1,12 @@
+C:\Users\The Beast>cd inventory_app
+
+Στο CMD, σταμάτα το flask run με CTRL + C
+
+Ξαναγράψε:
+
+bash
+Copy
+Edit
+python -m flask run
+
+Q?w$B2"m6Gu!5!$
