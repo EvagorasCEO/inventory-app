@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+import os
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
@@ -34,13 +35,11 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
 
-
 # ==== Login ====
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -54,13 +53,11 @@ def login():
             error = "Λάθος όνομα χρήστη ή κωδικός."
     return render_template('login.html', error=error)
 
-
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
 
 # ==== Αρχική Σελίδα ====
 
@@ -69,6 +66,10 @@ def logout():
 def index():
     return render_template('dashboard.html')
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return redirect(url_for('index'))
 
 # ==== Προϊόντα ====
 
@@ -96,7 +97,6 @@ def delete_product(id):
     db.session.commit()
     return redirect(url_for('view_products'))
 
-
 # ==== Πελάτες ====
 
 @app.route('/view_customers')
@@ -121,7 +121,6 @@ def delete_customer(id):
     db.session.delete(customer)
     db.session.commit()
     return redirect(url_for('view_customers'))
-
 
 # ==== Παραγγελίες ====
 
@@ -150,7 +149,6 @@ def delete_order(id):
     db.session.commit()
     return redirect(url_for('view_orders'))
 
-
 # ==== Reports ====
 
 @app.route('/product_report')
@@ -165,8 +163,8 @@ def customer_report():
     customers = Customer.query.all()
     return render_template('customer_report.html', customers=customers)
 
-
 # ==== Τρέξε την εφαρμογή ====
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
