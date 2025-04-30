@@ -49,10 +49,11 @@ def load_user(user_id):
 def home():
     return render_template('home.html')
 
-@app.route('/products', methods=['GET'])
+@app.route("/products")
 def get_products():
     products = Product.query.all()
-    return jsonify([{'id': p.id, 'name': p.name, 'quantity': p.quantity} for p in products])
+    return render_template("products.html", products=products)
+
 
 @app.route('/products', methods=['POST'])
 def add_product():
