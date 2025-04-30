@@ -2,17 +2,22 @@
 <html>
 <head>
     <title>Σύνδεση</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container mt-5">
-    <h2>🔐 Σύνδεση</h2>
+    <h2 class="mb-4">🔐 Σύνδεση</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
     <form method="POST">
         <div class="mb-3">
-            <label>Όνομα χρήστη:</label>
+            <label for="username" class="form-label">Όνομα χρήστη</label>
             <input type="text" name="username" class="form-control" required>
         </div>
         <div class="mb-3">
-            <label>Κωδικός:</label>
+            <label for="password" class="form-label">Κωδικός</label>
             <input type="password" name="password" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">Σύνδεση</button>
