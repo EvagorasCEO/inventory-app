@@ -196,18 +196,3 @@ def low_stock():
     </ul>
 </body>
 </html>
-```
-
----
-
-Αφού τα προσθέσεις:
-1. **Άνοιξε CMD στο φάκελο `inventory_app`**.
-2. Εκτέλεσε:
-```bash
-git add .
-git commit -m "Add templates and routes for all pages"
-git push
-```
-3. Μετά μπες στο Render και κάνε **Manual Deploy** αν δεν ξεκινήσει μόνο του.
-
-Πες μου όταν τελειώσεις για να ελέγξουμε τη λειτουργία ή να φτιάξουμε login. 🚀
