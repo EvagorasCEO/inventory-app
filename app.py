@@ -1,7 +1,4 @@
 ### 🔹 Βήμα 1: Customers
-
-**app.py**:
-```python
 @app.route("/customers")
 def get_customers():
     customers = Customer.query.all()
