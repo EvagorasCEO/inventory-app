@@ -63,10 +63,11 @@ def add_product():
     db.session.commit()
     return jsonify({'id': p.id, 'name': p.name, 'quantity': p.quantity}), 201
 
-@app.route('/customers', methods=['GET'])
+@app.route("/customers")
 def get_customers():
     customers = Customer.query.all()
-    return jsonify([{'id': c.id, 'name': c.name, 'email': c.email} for c in customers])
+    return render_template("customers.html", customers=customers)
+
 
 @app.route('/customers', methods=['POST'])
 def add_customer():
