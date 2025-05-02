@@ -2,38 +2,54 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <title>Οχήματα</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Οχήματα Εταιρείας</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="mb-4">🚗 Οχήματα Εταιρείας</h2>
+<body>
+    <h1>🚗 Οχήματα Εταιρείας</h1>
 
-        <!-- Κουμπί επιστροφής -->
-        <a href="{{ url_for('index') }}" class="btn btn-secondary mb-4">🔙 Επιστροφή στην Αρχική</a>
+    <a href="{{ url_for('index') }}">
+        <button style="background-color: #4a4a4a; color: white; padding: 10px 20px; border: none; margin-bottom: 20px;">
+            ⬅️ Επιστροφή στην Αρχική
+        </button>
+    </a>
 
-        <h4>Προσθήκη Οχήματος</h4>
-        <form action="{{ url_for('add_vehicle') }}" method="POST">
-            <input class="form-control mb-2" type="text" name="registration_number" placeholder="Αριθμός Κυκλοφορίας" required>
-            <input class="form-control mb-2" type="text" name="model" placeholder="Μοντέλο" required>
-            <input class="form-control mb-2" type="number" name="year" placeholder="Χρονολογία" required>
-            <input class="form-control mb-2" type="text" name="owner" placeholder="Ιδιοκτήτης / Χειριστής" required>
+    <h2>Προσθήκη Οχήματος</h2>
+    <form method="POST" action="{{ url_for('add_vehicle') }}">
+        <input type="text" name="registration_number" placeholder="Αριθμός Κυκλοφορίας" required><br>
+        <input type="text" name="model" placeholder="Μοντέλο" required><br>
+        <input type="text" name="year" placeholder="Χρονολογία" required><br>
+        <input type="text" name="owner" placeholder="Ιδιοκτήτης / Χειριστής" required><br>
 
-            <label for="road_tax_expiry">Ημ/νία Λήξης Άδειας Κυκλοφορίας:</label>
-            <input class="form-control mb-2" type="date" name="road_tax_expiry">
+        <label>Ημ/νία Λήξης Άδειας Κυκλοφορίας:</label><br>
+        <input type="date" name="license_expiry"><br>
 
-            <label for="insurance_expiry">Ημ/νία Λήξης Ασφάλειας:</label>
-            <input class="form-control mb-2" type="date" name="insurance_expiry">
+        <label>Ημ/νία Λήξης Ασφάλειας:</label><br>
+        <input type="date" name="insurance_expiry"><br>
 
-            <label for="mot_expiry">Ημ/νία Λήξης ΜΟΤ:</label>
-            <input class="form-control mb-2" type="date" name="mot_expiry">
+        <label>Ημ/νία Λήξης MOT:</label><br>
+        <input type="date" name="mot_expiry"><br>
 
-            <textarea class="form-control mb-3" name="notes" placeholder="Σημειώσεις"></textarea>
+        <textarea name="notes" placeholder="Σημειώσεις"></textarea><br>
 
-            <button class="btn btn-success">Προσθήκη</button>
-        </form>
+        <button type="submit" style="background-color: green; color: white;">Προσθήκη</button>
+    </form>
 
-        <!-- Αν θέλεις, εδώ θα μπουν τα καταχωρημένα οχήματα -->
-    </div>
+    <h2>Λίστα Οχημάτων</h2>
+    {% for vehicle in vehicles %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+            <strong>{{ vehicle.registration_number }}</strong> - {{ vehicle.model }} ({{ vehicle.year }})<br>
+            Ιδιοκτήτης: {{ vehicle.owner }}<br>
+            Άδεια έως: {{ vehicle.license_expiry or '-' }} |
+            Ασφάλεια έως: {{ vehicle.insurance_expiry or '-' }} |
+            MOT έως: {{ vehicle.mot_expiry or '-' }}<br>
+            Σημειώσεις: {{ vehicle.notes or '—' }}
+            <form method="POST" action="{{ url_for('delete_vehicle', id=vehicle.id) }}">
+                <button type="submit" style="background-color: red; color: white;">Διαγραφή</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Δεν υπάρχουν καταχωρημένα οχήματα.</p>
+    {% endfor %}
 </body>
 </html>

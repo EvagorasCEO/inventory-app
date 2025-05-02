@@ -1,42 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
 <head>
+    <meta charset="UTF-8">
     <title>Παραγγελίες</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
-<body class="container mt-5">
-    <h1 class="mb-4">Λίστα Παραγγελιών</h1>
-    <ul class="list-group mb-5">
-        {% for order in orders %}
-            <li class="list-group-item">
-                {{ order.customer.name }} → {{ order.product.name }} ({{ order.quantity }} τεμάχια)
-            </li>
-        {% endfor %}
-    </ul>
+<body class="container mt-4">
 
-    <h2 class="mb-3">Καταχώρηση Νέας Παραγγελίας</h2>
-    <form action="/add_order_form" method="POST" class="mb-5">
-        <div class="mb-3">
-            <label class="form-label">Πελάτης</label>
-            <select name="customer_id" class="form-select" required>
-                {% for customer in customers %}
-                    <option value="{{ customer.id }}">{{ customer.name }}</option>
-                {% endfor %}
-            </select>
+    <h1 class="mb-4">📦 Παραγγελίες</h1>
+
+    <a href="{{ url_for('index') }}" class="btn btn-dark mb-4">🏠 Επιστροφή στην Αρχική</a>
+
+    <!-- Προσθήκη Παραγγελίας -->
+    <form method="POST" action="{{ url_for('add_order_form') }}" class="mb-4">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label for="customer_id" class="form-label">Πελάτης:</label>
+                <select class="form-select" name="customer_id" required>
+                    {% for customer in customers %}
+                        <option value="{{ customer.id }}">{{ customer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="product_id" class="form-label">Προϊόν:</label>
+                <select class="form-select" name="product_id" required>
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="quantity" class="form-label">Ποσότητα:</label>
+                <input type="number" name="quantity" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">➕ Προσθήκη</button>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Προϊόν</label>
-            <select name="product_id" class="form-select" required>
-                {% for product in products %}
-                    <option value="{{ product.id }}">{{ product.name }} ({{ product.quantity }} διαθέσιμα)</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Ποσότητα</label>
-            <input type="number" name="quantity" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-success">Καταχώρηση</button>
     </form>
+
+    <!-- Λίστα Παραγγελιών -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>🧾 Πελάτης</th>
+                <th>📦 Προϊόν</th>
+                <th>🔢 Ποσότητα</th>
+                <th>🗑 Διαγραφή</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.customer.name }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_order', id=order.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </body>
 </html>
