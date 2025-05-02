@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
@@ -14,6 +15,33 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # ==== Μοντέλα ====
+
+class Driver(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    phone = db.Column(db.String(50))
+    email = db.Column(db.String(100))
+
+class Vehicle(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    registration_number = db.Column(db.String(50), unique=True)
+    model = db.Column(db.String(100))
+    year = db.Column(db.Integer)
+    owner = db.Column(db.String(100))
+    license_expiry = db.Column(db.Date)
+    insurance_expiry = db.Column(db.Date)
+    mot_expiry = db.Column(db.Date)
+    notes = db.Column(db.Text)
+
+class VehicleUsage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'))
+    driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'))
+    start_time = db.Column(db.DateTime, default=datetime.utcnow)
+    end_time = db.Column(db.DateTime, nullable=True)
+
+    vehicle = db.relationship("Vehicle", backref="usages")
+    driver = db.relationship("Driver", backref="usages")
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,7 +87,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ==== Αρχική Σελίδα ====
+# ==== Dashboard ====
 
 @app.route('/')
 @login_required
@@ -163,7 +191,76 @@ def customer_report():
     customers = Customer.query.all()
     return render_template('customer_report.html', customers=customers)
 
-# ==== Τρέξε την εφαρμογή ====
+# ==== Drivers ====
+
+@app.route('/view_drivers')
+@login_required
+def view_drivers():
+    drivers = Driver.query.all()
+    return render_template('drivers.html', drivers=drivers)
+
+@app.route('/add_driver', methods=['POST'])
+@login_required
+def add_driver():
+    name = request.form['name']
+    phone = request.form['phone']
+    email = request.form['email']
+    driver = Driver(name=name, phone=phone, email=email)
+    db.session.add(driver)
+    db.session.commit()
+    return redirect(url_for('view_drivers'))
+
+@app.route('/delete_driver/<int:id>', methods=['POST'])
+@login_required
+def delete_driver(id):
+    driver = Driver.query.get(id)
+    db.session.delete(driver)
+    db.session.commit()
+    return redirect(url_for('view_drivers'))
+
+# ==== Vehicles ====
+
+@app.route('/view_vehicles')
+@login_required
+def view_vehicles():
+    vehicles = Vehicle.query.all()
+    today = datetime.today().date()
+    alerts = []
+
+    for v in vehicles:
+        for label, date in [("Άδεια", v.license_expiry), ("Ασφάλεια", v.insurance_expiry), ("MOT", v.mot_expiry)]:
+            if date and (date - today).days <= 14:
+                alerts.append(f"⚠️ Το {label} του {v.registration_number} λήγει στις {date.strftime('%d/%m/%Y')}")
+
+    return render_template('vehicles.html', vehicles=vehicles, alerts=alerts)
+
+@app.route('/add_vehicle', methods=['POST'])
+@login_required
+def add_vehicle():
+    reg = request.form['registration_number']
+    model = request.form['model']
+    year = int(request.form['year'])
+    owner = request.form['owner']
+    license_expiry = datetime.strptime(request.form['license_expiry'], '%Y-%m-%d').date()
+    insurance_expiry = datetime.strptime(request.form['insurance_expiry'], '%Y-%m-%d').date()
+    mot_expiry = datetime.strptime(request.form['mot_expiry'], '%Y-%m-%d').date()
+    notes = request.form['notes']
+
+    vehicle = Vehicle(
+        registration_number=reg,
+        model=model,
+        year=year,
+        owner=owner,
+        license_expiry=license_expiry,
+        insurance_expiry=insurance_expiry,
+        mot_expiry=mot_expiry,
+        notes=notes
+    )
+    db.session.add(vehicle)
+    db.session.commit()
+    return redirect(url_for('view_vehicles'))
+
+# ==== Εκκίνηση ====
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
