@@ -3,22 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Πίνακας Ελέγχου</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">🎉 Καλωσόρισες, {{ current_user.username }}!</h1>
 
-    <div class="container mt-5 text-center">
-        <h1>🎉 Καλωσόρισες, {{ current_user.username }}!</h1>
-
-        <div class="mt-4 d-grid gap-3 col-6 mx-auto">
-            <a href="{{ url_for('view_products') }}" class="btn btn-primary">📦 Προϊόντα</a>
-            <a href="{{ url_for('view_customers') }}" class="btn btn-success">👥 Πελάτες</a>
-            <a href="{{ url_for('view_orders') }}" class="btn btn-warning">🧾 Παραγγελίες</a>
-            <a href="{{ url_for('product_report') }}" class="btn btn-info">📊 Αναφορά Προϊόντων</a>
-            <a href="{{ url_for('customer_report') }}" class="btn btn-secondary">📈 Αναφορά Πελατών</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-danger mt-3">Αποσύνδεση</a>
-        </div>
+        <a href="{{ url_for('view_products') }}">
+            <button class="btn btn-primary btn-lg btn-block mb-3">📦 Προϊόντα</button>
+        </a>
+        <a href="{{ url_for('view_customers') }}">
+            <button class="btn btn-success btn-lg btn-block mb-3">👥 Πελάτες</button>
+        </a>
+        <a href="{{ url_for('view_orders') }}">
+            <button class="btn btn-warning btn-lg btn-block mb-3">🧾 Παραγγελίες</button>
+        </a>
+        <a href="{{ url_for('product_report') }}">
+            <button class="btn btn-info btn-lg btn-block mb-3">📊 Αναφορά Προϊόντων</button>
+        </a>
+        <a href="{{ url_for('customer_report') }}">
+            <button class="btn btn-secondary btn-lg btn-block mb-3">📝 Αναφορά Πελατών</button>
+        </a>
+        <a href="{{ url_for('view_drivers') }}">
+            <button class="btn btn-dark btn-lg btn-block mb-3">🚗 Οδηγοί</button>
+        </a>
+        <a href="{{ url_for('view_vehicles') }}">
+            <button class="btn btn-secondary btn-lg btn-block mb-3">🚙 Οχήματα</button>
+        </a>
+        <a href="{{ url_for('logout') }}">
+            <button class="btn btn-danger btn-lg btn-block">Αποσύνδεση</button>
+        </a>
     </div>
-
 </body>
 </html>
